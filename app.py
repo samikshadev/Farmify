@@ -56,24 +56,22 @@ def index():
 def farmer_register():
     if request.method == 'POST':
         name = request.form['name']
-        if not all(char. isalpha() or char.isspace() for char in name):
-            flash('Name must contain only letters and spaces!', 'error')
+        if not all(char.isalpha() or char == ' ' for char in name):
+            flash('Name must contain only alphabetic characters and spaces!', 'error')
             return redirect(url_for('farmer_register'))
         email = request.form['email']
         password = request.form['password']
+        import re
+        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[\W_]', password):
+            flash('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character!', 'error')
+            return redirect(url_for('farmer_register'))
         phone = request.form['phone']
         if not phone.isdigit() or len(phone) != 10:
-            flash('Phone number must be 10 digits!', 'error')
+            flash('Phone number must be exactly 10 digits!', 'error')
             return redirect(url_for('farmer_register'))
         location = request.form['location']
+        
         hashed_password = generate_password_hash(password)
-        import re 
-        password_pattern = re.compile(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$')
-        if not password_pattern.match(password):
-            flash('Password must be at least 8 characters long and include letters, numbers, and special characters!', 'error')
-            return redirect(url_for('farmer_register'))
-        
-        
         
         try:
             conn = sqlite3.connect('farmify.db')
@@ -95,21 +93,19 @@ def farmer_register():
 def buyer_register():
     if request.method == 'POST':
         name = request.form['name']
-        if not all(char. isalpha() or char.isspace() for char in name):
-            flash('Name must contain only letters and spaces!', 'error')
+        if not all(char.isalpha() or char == ' ' for char in name):
+            flash('Name must contain only alphabetic characters and spaces!', 'error')
             return redirect(url_for('buyer_register'))
         email = request.form['email']
         password = request.form['password']
-        import re 
-        password_pattern = re.compile(r'^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$')
-        if not password_pattern.match(password):
-            flash('Password must be at least 8 characters long and include letters, numbers, and special characters!', 'error')
+        import re                               
+        if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[\W_]', password):
+            flash('Password must be at least 8 characters long and include uppercase, lowercase, number, and special character!', 'error')
             return redirect(url_for('buyer_register'))
         phone = request.form['phone']
-        if not phone.isdigit() or len(phone) != 10:
-            flash('Phone number must be 10 digits!', 'error')
+        if not phone.isdigit() or len(phone) != 10:          
+            flash('Phone number must be exactly 10 digits!', 'error')
             return redirect(url_for('buyer_register'))
-        
         location = request.form['location']
         
         hashed_password = generate_password_hash(password)
@@ -234,6 +230,5 @@ def view_crops():
     
     return render_template('view_crops.html', crops=crops)
 
-    
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True)
