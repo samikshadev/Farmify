@@ -234,5 +234,6 @@ def view_crops():
     
     return render_template('view_crops.html', crops=crops)
 
+    
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
