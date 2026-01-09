@@ -60,6 +60,9 @@ def farmer_register():
             flash('Name must contain only alphabetic characters and spaces!', 'error')
             return redirect(url_for('farmer_register'))
         email = request.form['email']
+        if '@' not in email or '.' not in email:
+            flash('Invalid email format!', 'error')
+            return redirect(url_for('farmer_register'))
         password = request.form['password']
         import re
         if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[\W_]', password):
@@ -97,6 +100,9 @@ def buyer_register():
             flash('Name must contain only alphabetic characters and spaces!', 'error')
             return redirect(url_for('buyer_register'))
         email = request.form['email']
+        if not email.endswith('@example.com'):
+            flash('Email must be from the domain @example.com!', 'error')
+            return redirect(url_for('buyer_register'))
         password = request.form['password']
         import re                               
         if len(password) < 8 or not re.search(r'[A-Z]', password) or not re.search(r'[a-z]', password) or not re.search(r'[0-9]', password) or not re.search(r'[\W_]', password):
